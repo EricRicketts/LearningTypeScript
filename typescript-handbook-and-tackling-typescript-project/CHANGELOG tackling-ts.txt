@@ -1,0 +1,16 @@
+# Changelog “Tackling TypeScript”
+
+* 2020-08-13:
+  * Fixed a few minor problems in chapter “The essentials of TypeScript”
+  * Improved chapter “What is a type in TypeScript?”. It is now free to read online.
+* 2020-06-25:
+  * New chapter: “An overview of computing with types”
+  * Improved the structure of the TOC
+* 2020-06-14:
+  * 4 new chapters:
+    * The top types any and unknown
+    * Type assertions (related to casting)
+    * Type guards and assertion functions
+    * Validating external data
+  * Switched from `@ts-ignore` to `@ts-expect-error`
+* 2020-05-03: First release of book

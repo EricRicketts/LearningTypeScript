@@ -1,0 +1,11 @@
+node_modules/
+build/
+lib/
+dist/
+docs/
+.idea/*
+tackling-ts-book*/
+
+.DS_Store
+coverage
+*.log
