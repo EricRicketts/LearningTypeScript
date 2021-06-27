@@ -145,9 +145,38 @@ describe('TypeScript Handbook EveryDay Types', function () {
     });
   });
 
-  describe('Type Assertions', function () {
-    it('can use "as" for type assertions', function () {
-      interface Point { x: number, y: number }
+  describe('Literal Types', function () {
+    it('particularly useful with union', function () {
+      function alignedString(s: string, alignment: 'left' | 'right') {
+        return alignment === 'left' ? s.padEnd(10) : s.padStart(10);
+      }
+      expect(alignedString('foo', 'right')).toBe('       foo');
+    });
+
+    it('can be combined with non-literal types', function () {
+      interface Options {
+        width: number;
+      }
+      function configure(x: Options | "auto") {
+        return x === 'auto' ? NaN : x.width;
+      }
+      expect(configure({ width: 5 })).toBe(5);
+    });
+  });
+
+  describe('strictNullChecks on', function () {
+    it('advised to be default setting, so null or undefined do not pass through', function () {
+      function liveDangerously(x: number | null) {
+        return x === null ? 'null argument' : x;
+      }
+      expect(liveDangerously(5)).toBe(5);
+    });
+
+    it('can use typescript shorthand for null or undefined checks', function () {
+      function liveDangerously(x?: number | null) {
+        return x!.toFixed(2);
+      }
+      expect(liveDangerously(3.56)).toBe('3.56');
     });
   });
 });
