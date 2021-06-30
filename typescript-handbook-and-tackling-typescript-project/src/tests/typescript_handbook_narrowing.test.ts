@@ -115,7 +115,63 @@ describe('TypeScript Handbook Narrowing', function () {
     });
   });
 
-  describe('Discriminated Unions', function () {
+  describe('Discriminated Unions and Exhaustiveness Checking', function () {
+    interface Circle {
+      kind: 'circle',
+      radius: number
+    }
+    interface Square {
+      kind: 'square',
+      sideLength: number
+    }
+    // much better a union type, we are guaranteed to have radius or sideLength when we narrow
+    type Shape = Circle | Square;
+    function getArea(shape: Shape) {
+      switch (shape.kind) {
+        case 'circle': {
+          return Math.PI * shape.radius ** 2;
+        }
+        case 'square': {
+          return shape.sideLength ** 2;
+        }
+      }
+    }
+    // in this case if we were to add a Triangle to the Shape union and not account for it
+    // in our switch statement we would raise a compile error because the never type cannot
+    // be assigned any type other than itself, so we would have _exhaustiveCheck: never = Triangle
+    // and this is not allowed
+    function getAreaWithNever(shape: Shape) {
+      switch (shape.kind) {
+        case 'circle': {
+          return Math.PI * shape.radius ** 2;
+        }
+        case 'square': {
+          return shape.sideLength ** 2;
+        }
+        default: {
+          const _exhaustiveCheck: never = shape;
+          return _exhaustiveCheck;
+        }
+      }
+    }
+    /* this interface is flawed, the reason both radius and sideLength are optional is because
+     regardless of what shape we choose the radius and the length could still be undefined.
+    interface ShapeFlawed {
+      kind: 'circle' | 'square',
+      radius?: number,
+      sideLength?: number
+    }
+    */
 
+    it('we can narrow discriminated unions', function () {
+      let square: Shape = { kind: 'square', sideLength: 2 }
+      expect(getArea(square)).toBe(4);
+    });
+
+    it('never can help with type narrowing', function () {
+      let circle: Shape = { kind: 'circle', radius: 2 }
+      let area = getAreaWithNever(circle);
+      expect(area.toFixed(2)).toBe('12.57');
+    });
   });
 });
