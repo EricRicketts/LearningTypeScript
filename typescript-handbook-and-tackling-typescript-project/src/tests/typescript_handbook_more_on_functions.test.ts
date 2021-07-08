@@ -207,4 +207,18 @@ describe('TypeScript Handbook More On Functions', function () {
       });
     });
   });
+
+  describe('Optional Parameters', function () {
+    describe('Basics', function () {
+      // we cannot call toFixed on undefined, so we have to return a string in this case
+      // note optional parameters assume a union with undefined
+      function f(x?: number) { return x === undefined ? '' : x.toFixed(2); }
+
+      it('optional parameters are type | undefined', function () {
+        expected = ['', '2.34'];
+        results = [f(), f(2.34)];
+        expect(results).toEqual(expected);
+      });
+    });
+  });
 });
