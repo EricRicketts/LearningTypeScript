@@ -189,6 +189,21 @@ describe('TypeScript Handbook More On Functions', function () {
           expected = [[2, 4, 6, 8, 10], [1, 3, 5, 7, 9]];
           expect(results).toEqual(expected);
         });
+
+        it('type parameters should appear twice', function () {
+          /*
+            for greet1 the type parameter does nothing to relate the input to the output, usually type parameters
+            should appear twice so they can relate the input to the output value.  In greet2 we do not need any
+            generics as Typescript can infer the return value will be a string
+
+            RULE: If a parameter only appears once in a location, consider if it is even needed.
+          */
+          function greet1<Str extends string>(s: Str) {return `foo ${s}`; }
+          function greet2(s: string) { return `foo ${s}`; }
+          expected = ['foo bar', 'foo fizz'];
+          results = [greet1('bar'), greet2('fizz')];
+          expect(results).toEqual(expected);
+        });
       });
     });
   });
