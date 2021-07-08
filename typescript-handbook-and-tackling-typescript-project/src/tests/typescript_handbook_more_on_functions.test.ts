@@ -211,7 +211,7 @@ describe('TypeScript Handbook More On Functions', function () {
   describe('Optional Parameters', function () {
     describe('Basics', function () {
       // we cannot call toFixed on undefined, so we have to return a string in this case
-      // note optional parameters assume a union with undefined
+      // note optional parameters assume a union with undefined, optional parameters specified with param?:
       function f(x?: number) { return x === undefined ? '' : x.toFixed(2); }
 
       it('optional parameters are type | undefined', function () {
@@ -219,6 +219,17 @@ describe('TypeScript Handbook More On Functions', function () {
         results = [f(), f(2.34)];
         expect(results).toEqual(expected);
       });
+    });
+
+    describe('Optional Parameters in Callbacks', function () {
+      let ary: number[] = [];
+      function myForEach(arr: any[], callback: (x: any, index?: number) => void) {
+        for (let i = 0; i < arr.length; i += 1) {
+          callback(arr[i], i); // just like Javascript TypeScript will ignore extra parameters
+        }
+      }
+      myForEach([1, 2, 3, 4], function(n) { ary.push(n); });
+      expect(ary).toEqual([1, 2, 3, 4]);
     });
   });
 });
