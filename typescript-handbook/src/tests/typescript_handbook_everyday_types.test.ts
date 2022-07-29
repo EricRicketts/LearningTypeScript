@@ -56,6 +56,7 @@ describe('TypeScript Handbook EveryDay Types', function () {
       expect(obj.z).toBeUndefined();
     });
   });
+  
   describe('Function Type Annotations', function () {
     it('parameter annotations', function () {
       function greet(name: string) {
@@ -65,10 +66,23 @@ describe('TypeScript Handbook EveryDay Types', function () {
     });
 
     it('return type annotations', function () {
-      function favoriteNumber(): number {
-        return 13;
-      }
+      function favoriteNumber(): number { return 13; }
       expect(favoriteNumber()).toBe(13);
+    });
+    
+    it('typescript can many times infer a return type', function () {
+      const stringReturn = (text: string) => text;
+      expect(stringReturn('FooBar')).toBe('FooBar');
+    });
+  
+    it('typescript infers the arguments for anonymous functions', function () {
+      const ary = ['foo', 'bar'];
+      const expected = ['FOO', 'BAR'];
+      const results: string[] = [];
+      
+      ary.forEach(s => results.push(s.toUpperCase())) // based on inferred type from the array, no need
+      // to declare type in the anonymous forEach function
+      expect(results).toEqual(expected);
     });
   });
 
@@ -83,6 +97,8 @@ describe('TypeScript Handbook EveryDay Types', function () {
     it('object types allow optional properties', function () {
       function returnName(name: { first: string, last?: string }) {
         return name.last ? `${name.first} ${name.last}` : `${name.first}`;
+        // because of the nature of optional properties you must check for its
+        // existence before using the property.
       }
       results = [returnName({ first: 'Elmer' }), returnName({ first: 'Elmer', last: 'Fudd' })];
       expected = ['Elmer', 'Elmer Fudd'];
@@ -103,7 +119,18 @@ describe('TypeScript Handbook EveryDay Types', function () {
       results = [returnIdType(4), returnIdType('5')];
       expect(results).toEqual(expected);
     });
-
+  
+    it('typescript only supports operations valid for every member of the union', function () {
+      function checkUnionType(id: string | number) {
+        if (typeof id === 'string') {
+          return id.toUpperCase();
+        } else {
+          return id;
+        }
+      }
+      expect(checkUnionType('foo')).toBe('FOO');
+    });
+    
     it('union types may require narrowing', function () {
       function welcomePeople(group: string[] | string) {
         if (Array.isArray(group)) {
@@ -116,6 +143,7 @@ describe('TypeScript Handbook EveryDay Types', function () {
       results = [welcomePeople(['Elmer', 'Daffy', 'Bugs']), welcomePeople('Yosemite')];
       expect(results).toEqual(expected);
     });
+  
   });
 
   describe('Type Aliases', function () {
