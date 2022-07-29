@@ -1,22 +1,61 @@
 describe('TypeScript Handbook EveryDay Types', function () {
   let results, expected;
   describe('Type annotations for string, number, and boolean', function () {
+    // note for literal primitive assignments Typescript can easily infer the type
+    // we could use const myString: string = 'Alice'; const myNumber: number = 34;
+    // const myBoolean: boolean = true;
     it('string annotation', function () {
-      let myName: string = 'Alice';
-      expect(myName).toBe('Alice');
+      const myString = 'Alice';
+      expect(myString).toBe('Alice');
     });
 
     it('number annotation', function () {
-      let myNumber: number = 34;
+      const myNumber = 34;
       expect(myNumber).toBe(34);
     });
 
     it('boolean annotation', function() {
-      let myBoolean: boolean = true;
+      const myBoolean = true;
       expect(myBoolean).toBe(true);
     });
   });
 
+  describe('Array annotations for string, number, and boolean', function () {
+    it('string annotation', function () {
+      const myStringAry: string[] = ['foo', 'bar', 'fizz', 'buzz'];
+      expect(myStringAry).toEqual(['foo', 'bar', 'fizz', 'buzz']);
+    });
+  
+    it('number annotation ', function () {
+      const myNumberAry: number[] = [0, 1, 2, 3];
+      expect(myNumberAry).toEqual([0, 1, 2, 3]);
+    });
+    
+    it('boolean annotation ', function () {
+      const myBooleanAry: boolean[] = [true, false, true, false];
+      expect(myBooleanAry).toEqual([true, false, true, false]);
+    });
+  });
+  
+  describe('any annotation', function () {
+    let obj: any
+    beforeEach(() => {
+      obj = { x: 0 }
+    });
+    
+    it('any type circumvents type checking errors', function () {
+      expect(obj.x).toBe(0);
+    });
+  
+    it('safe to assign new properties to any type', function () {
+      obj.y = 'foo';
+      expect(obj.y).toBe('foo');
+    });
+  
+    it('safe to call non-existent properties', function () {
+      expect(obj.z).toBeUndefined();
+    });
+  });
   describe('Function Type Annotations', function () {
     it('parameter annotations', function () {
       function greet(name: string) {
@@ -106,7 +145,7 @@ describe('TypeScript Handbook EveryDay Types', function () {
         Note a type, once declared cannot be changed after it is created, so we cannot do something like:
         type Animal = { name: string };
         type Animal = { weight: number }; // here we attempt to add a property to an existing Animal type
-        // and we would encounter a TypeScript compile error, claiming a duplicate Animal type 
+        // and we would encounter a TypeScript compile error, claiming a duplicate Animal type
       */
       type Animal = { name: string };
       type Bear = Animal & { likes_honey: boolean };
@@ -120,7 +159,7 @@ describe('TypeScript Handbook EveryDay Types', function () {
 
   describe('Interfaces', function () {
     it('an interface declaration is another way to declear an object type', function () {
-      interface Point { x: number, y: number };
+      interface Point { x: number, y: number }
       function getCoordinate(p: Point) {
         return [p.x, p.y];
       }
@@ -128,8 +167,8 @@ describe('TypeScript Handbook EveryDay Types', function () {
     });
 
     it('interfaces can have new fields added to them after declaration', function () {
-      interface Animal { name: string };
-      interface Animal { species: string };
+      interface Animal { name: string }
+      interface Animal { species: string }
       function getAnimal(): Animal {
         return { name: 'wolf', species: 'Canine' };
       }
