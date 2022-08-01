@@ -25,38 +25,38 @@ describe('TypeScript Handbook EveryDay Types', function () {
       const myStringAry: string[] = ['foo', 'bar', 'fizz', 'buzz'];
       expect(myStringAry).toEqual(['foo', 'bar', 'fizz', 'buzz']);
     });
-  
+
     it('number annotation ', function () {
       const myNumberAry: number[] = [0, 1, 2, 3];
       expect(myNumberAry).toEqual([0, 1, 2, 3]);
     });
-    
+
     it('boolean annotation ', function () {
       const myBooleanAry: boolean[] = [true, false, true, false];
       expect(myBooleanAry).toEqual([true, false, true, false]);
     });
   });
-  
+
   describe('any annotation', function () {
     let obj: any
     beforeEach(() => {
       obj = { x: 0 }
     });
-    
+
     it('any type circumvents type checking errors', function () {
       expect(obj.x).toBe(0);
     });
-  
+
     it('safe to assign new properties to any type', function () {
       obj.y = 'foo';
       expect(obj.y).toBe('foo');
     });
-  
+
     it('safe to call non-existent properties', function () {
       expect(obj.z).toBeUndefined();
     });
   });
-  
+
   describe('Function Type Annotations', function () {
     it('parameter annotations', function () {
       function greet(name: string) {
@@ -69,17 +69,17 @@ describe('TypeScript Handbook EveryDay Types', function () {
       function favoriteNumber(): number { return 13; }
       expect(favoriteNumber()).toBe(13);
     });
-    
+
     it('typescript can many times infer a return type', function () {
       const stringReturn = (text: string) => text;
       expect(stringReturn('FooBar')).toBe('FooBar');
     });
-  
+
     it('typescript infers the arguments for anonymous functions', function () {
       const ary = ['foo', 'bar'];
       const expected = ['FOO', 'BAR'];
       const results: string[] = [];
-      
+
       ary.forEach(s => results.push(s.toUpperCase())) // based on inferred type from the array, no need
       // to declare type in the anonymous forEach function
       expect(results).toEqual(expected);
@@ -98,10 +98,25 @@ describe('TypeScript Handbook EveryDay Types', function () {
       function returnName(name: { first: string, last?: string }) {
         return name.last ? `${name.first} ${name.last}` : `${name.first}`;
         // because of the nature of optional properties you must check for its
-        // existence before using the property.
+        // existence before using the property.  This is called narrowing.
       }
       results = [returnName({ first: 'Elmer' }), returnName({ first: 'Elmer', last: 'Fudd' })];
       expected = ['Elmer', 'Elmer Fudd'];
+      expect(results).toEqual(expected);
+    });
+
+    it('object types can be extended via intersections', function() {
+      type Animal = {
+        name: string;
+      }
+
+      type Bear = Animal & {
+        honey: boolean;
+      }
+
+      const smokey: Bear = { name: "Smokey Bear", honey: false};
+      expected = ["Smokey Bear", false];
+      results = [smokey.name, smokey.honey];
       expect(results).toEqual(expected);
     });
   });
@@ -119,7 +134,7 @@ describe('TypeScript Handbook EveryDay Types', function () {
       results = [returnIdType(4), returnIdType('5')];
       expect(results).toEqual(expected);
     });
-  
+
     it('typescript only supports operations valid for every member of the union', function () {
       function checkUnionType(id: string | number) {
         if (typeof id === 'string') {
@@ -130,7 +145,7 @@ describe('TypeScript Handbook EveryDay Types', function () {
       }
       expect(checkUnionType('foo')).toBe('FOO');
     });
-    
+
     it('union types may require narrowing', function () {
       function welcomePeople(group: string[] | string) {
         if (Array.isArray(group)) {
@@ -139,20 +154,34 @@ describe('TypeScript Handbook EveryDay Types', function () {
           return `Welcome ${group}.`
         }
       }
+      // if it is not an array of strings then it must be a string, also called narrowing the union
       expected = ['Welcome Elmer, Daffy, Bugs.', 'Welcome Yosemite.']
       results = [welcomePeople(['Elmer', 'Daffy', 'Bugs']), welcomePeople('Yosemite')];
       expect(results).toEqual(expected);
     });
-  
+
+    it('common methods for types can be called without narrowing', function () {
+      function getThreeWithOffset(offset: number, x: number[] | string) {
+        return x.slice(offset, offset + 3);
+      }
+      const numberAry = [0, 1, 2, 3, 4, 5];
+      const str = "abcdef";
+      const expectedNumberAry = [1, 2, 3];
+      const expectedStr = "bcd";
+      const resultNumberAry = getThreeWithOffset(1, numberAry);
+      const resultStr = getThreeWithOffset(1, str);
+
+      expect([resultNumberAry, resultStr]).toEqual([expectedNumberAry, expectedStr]);
+    });
   });
 
   describe('Type Aliases', function () {
     it('enable object type reuse', function () {
       type Point = { x: number, y: number }; // declare a type of type Point
       function getCoordinates(p: Point) {
-        return [p.x, p.y];
+        return p;
       }
-      expect(getCoordinates({x: 1, y: 2})).toEqual([1, 2])
+      expect(getCoordinates({x: 1, y: 2})).toEqual({ x: 1, y: 2 });
     });
 
     it('using aliases is the same as using the aliased type', function () {
@@ -186,7 +215,7 @@ describe('TypeScript Handbook EveryDay Types', function () {
   });
 
   describe('Interfaces', function () {
-    it('an interface declaration is another way to declear an object type', function () {
+    it('an interface declaration is another way to declare an object type', function () {
       interface Point { x: number, y: number }
       function getCoordinate(p: Point) {
         return [p.x, p.y];
