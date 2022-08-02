@@ -258,6 +258,14 @@ describe('TypeScript Handbook EveryDay Types', function () {
       }
       expect(configure({ width: 5 })).toBe(5);
     });
+
+
+    it('can union literal return types', function () {
+      const compareStrings = (a: string, b: string): -1 | 0 | 1  => {
+        return a === b ? 0 : a > b ? 1 : -1;
+      }
+      expect(compareStrings("foo", "bar")).toBe(1);
+    });
   });
 
   describe('strictNullChecks on', function () {
@@ -270,7 +278,7 @@ describe('TypeScript Handbook EveryDay Types', function () {
 
     it('can use typescript shorthand for null or undefined checks', function () {
       function liveDangerously(x?: number | null) {
-        return x!.toFixed(2);
+        return x!.toFixed(2); // the ! ensures x is not a null or undefined value
       }
       expect(liveDangerously(3.56)).toBe('3.56');
     });
