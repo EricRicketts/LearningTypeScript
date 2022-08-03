@@ -1,8 +1,26 @@
 describe('TypeScript Handbook Narrowing', function () {
-  let results;
-  describe('Truthiness and Equality Narrowing', function () {
-    it('truthiness narrowing', function () {
+  let results, expected;
+
+  describe('Basic Narrowing Examples', function () {
+    it('Narrowing is made possible by type guards', function () {
+      const padLeft = (padding: number | string, input: string): string => {
+        // we need the type guard below because number | string cannot be assigned to number which wold be the
+        // case if we just returned " ".repeat(padding) + input, as repeat assumes its argument is a number
+        if (typeof padding === 'number') {
+          return " ".repeat(padding) + input;
+        } else {
+          return padding + " " + input;
+        }
+      }
+      expected = ["   foo", "bar foo"];
+      results = [padLeft(3, "foo"), padLeft("bar", "foo")];
+      expect(results).toEqual(expected);
+    });
+
+    it('Narrowing taking into account null', function () {
       function returnAll(strs: string | string[] | null) {
+        // we need the strs && typeof strs === 'object' because if we just did typeof strs === 'object' then
+        // we would only be narrowed to string | null
         if (strs && typeof strs === 'object') {
           return strs.join(' ');
         } else {
@@ -11,7 +29,23 @@ describe('TypeScript Handbook Narrowing', function () {
       }
       expect(returnAll(['foo', 'bar'])).toBe('foo bar');
     });
+  });
 
+  describe('Truthiness and Equality Narrowing', function () {
+    it('simple truthiness narrowing', function () {
+      const getUsersOnlineMessage = (numberUsersOnline?: number): string => {
+        // we can use truthiness narrowing in this case to check if the parameter exists
+        // then based on its existence or non-existence branch accordingly
+        const numberOfUsersExist = !!numberUsersOnline;
+        if (numberOfUsersExist) {
+          return `There are ${numberUsersOnline} users online now.`;
+        } else {
+          return "Nobody's there.  :(";
+        }
+      }
+      expected = ['There are 5 users online now.', 'Nobody\'s there.  :('];
+      results = [getUsersOnlineMessage(5), getUsersOnlineMessage()];
+    });
     it('simple equality narrowing', function () {
       function equalityNarrowingExample(x: string | number, y: string | boolean) {
         if (x === y) { // in this case x === y only if both are strings
@@ -66,7 +100,7 @@ describe('TypeScript Handbook Narrowing', function () {
     describe('Variable Assignment', function () {
       it("right side of assignment appropriately narrows the left side", () => {
         results = [];
-        let x = Math.random() < 0.5 ? 10 : 'hello world'; // x: string | number
+        const x = Math.random() < 0.5 ? 10 : 'hello world'; // x: string | number
         results.push(x);
         [1, 'goodbye'].forEach(x => results.push(x)); // reassignment possible because x: string | number
         expect(results.slice(1)).toEqual([1, 'goodbye']);
@@ -164,13 +198,13 @@ describe('TypeScript Handbook Narrowing', function () {
     */
 
     it('we can narrow discriminated unions', function () {
-      let square: Shape = { kind: 'square', sideLength: 2 }
+      const square: Shape = { kind: 'square', sideLength: 2 }
       expect(getArea(square)).toBe(4);
     });
 
     it('never can help with type narrowing', function () {
-      let circle: Shape = { kind: 'circle', radius: 2 }
-      let area = getAreaWithNever(circle);
+      const circle: Shape = { kind: 'circle', radius: 2 }
+      const area = getAreaWithNever(circle);
       expect(area.toFixed(2)).toBe('12.57');
     });
   });
