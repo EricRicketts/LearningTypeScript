@@ -1,0 +1,20 @@
+Remaining sections in Typescript Handbook:
+
+Narrowing: 8
+More on Functions: 27
+Object Types: 12
+Type Manipulation: 17
+  Generics: 7
+  Keyof Type Operator: 1
+  Typeof Type Operator: 2
+  Indexed Access of types: 1
+  Conditional Types: 3
+  Mapped Types: 3
+  Template Literal Types: 7
+Classes: 30  
+Modules: 10
+
+total = 8 + 27 + 12 + 17 + 30 + 10 = 104
+
+
+
